@@ -46,4 +46,23 @@ CREATE TABLE auth_sessions(
     revoked_at TIMESTAMPTZ
 );
 
+CREATE TABLE categories(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(80) NOT NULL UNIQUE
+);
+
+CREATE TABLE interests(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    category_id BIGINT NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
+    name VARCHAR(80) NOT NULL UNIQUE
+);
+
+CREATE TABLE user_interests(
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    interest_id BIGINT NOT NULL REFERENCES interests(id) ON DELETE RESTRICT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    PRIMARY KEY (user_id, interest_id)
+);
+
 COMMIT;
